@@ -1,12 +1,19 @@
 # reactjs-program
 A collection of ReactJS examples.
 
+### Requirements
+1) NodeJS & npm
+
+2) python (optional, used for serving up HTTP)
+
 ### Getting Started
 You can view the examples through any HTTP server. The following assumes use of [Python's SimpleHTTPServer] (https://docs.python.org/2/library/simplehttpserver.html#module-SimpleHTTPServer)
 
 1) Clone repo and cd into it.
 
-2) Run `python -m SimpleHTTPServer 8000`. You may need to install Python if not already installed.
+2) Install dependencies: `npm install`
+
+2) Start HTTP server: `python -m SimpleHTTPServer 8000`. You may need to install Python if not already installed.
 
 3) Navigate to desired example, e.g., http://localhost:8000/todo/
 
