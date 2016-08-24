@@ -4,7 +4,14 @@ var React = require('react')
 var ToDoComponent = React.createClass({
   getInitialState: function () {
     // Initialize default list of ToDos
-    return {todos: ['Buy Apples', 'Sell Oranges', 'Pawn Pears']}
+    var activeToDos = []
+    var inactiveToDos = []
+    var allToDos = activeToDos.concat(inactiveToDos)
+    return {
+      todos: allToDos,
+      activeToDos: activeToDos,
+      inactiveToDos: inactiveToDos
+    }
   },
   updateToDos: function (newToDo) {
     var activeToDos = this.state.todos.concat([newToDo])
@@ -13,7 +20,7 @@ var ToDoComponent = React.createClass({
   },
   render: function () {
     return (
-      <div id='ToDoListDiv'>
+      <div id='ToDoListDiv' className="col-md-offset-5 col-md-2">
         <ToDoInput onFormSubmit={this.updateToDos}/>
         <ToDoList todos={this.state.todos} />
       </div>
@@ -41,9 +48,12 @@ var ToDoInput = React.createClass({
   },
   render: function () {
     return (
-      <form>
-        <input type='text' onChange={this.onChange} value={this.state.todo} onKeyPress={this.handleAddToDo} placeholder='Add note...' />
-      </form>
+      <div className="input-group">
+        <input type='text' className="form-control" onChange={this.onChange} value={this.state.todo} onKeyPress={this.handleAddToDo} placeholder='Add note...' />
+        <span className="input-group-btn">
+          <button className="btn btn-secondary" type="button">Add!</button>
+        </span>
+      </div>
     )
   }
 })
@@ -58,7 +68,7 @@ var ToDoList = React.createClass({
     }
     return (
       // Add an <li>ToDoText</li> for each ToDo
-      <ul>{this.props.todos.map(allToDos)}</ul>
+      <div className="list-group">{this.props.todos.map(allToDos)}</div>
     )
   }
 })
@@ -68,7 +78,7 @@ var ToDo = React.createClass({
   render: function () {
     return (
 
-      <li>{this.props.children}</li>
+      <a href="#" className="list-group-item">{this.props.children}</a>
     )
   }
 })

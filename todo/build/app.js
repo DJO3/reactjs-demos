@@ -20586,7 +20586,14 @@ var ToDoComponent = React.createClass({
 
   getInitialState: function () {
     // Initialize default list of ToDos
-    return { todos: ['Buy Apples', 'Sell Oranges', 'Pawn Pears'] };
+    var activeToDos = [];
+    var inactiveToDos = [];
+    var allToDos = activeToDos.concat(inactiveToDos);
+    return {
+      todos: allToDos,
+      activeToDos: activeToDos,
+      inactiveToDos: inactiveToDos
+    };
   },
   updateToDos: function (newToDo) {
     var activeToDos = this.state.todos.concat([newToDo]);
@@ -20596,7 +20603,7 @@ var ToDoComponent = React.createClass({
   render: function () {
     return React.createElement(
       'div',
-      { id: 'ToDoListDiv' },
+      { id: 'ToDoListDiv', className: 'col-md-offset-5 col-md-2' },
       React.createElement(ToDoInput, { onFormSubmit: this.updateToDos }),
       React.createElement(ToDoList, { todos: this.state.todos })
     );
@@ -20625,9 +20632,18 @@ var ToDoInput = React.createClass({
   },
   render: function () {
     return React.createElement(
-      'form',
-      null,
-      React.createElement('input', { type: 'text', onChange: this.onChange, value: this.state.todo, onKeyPress: this.handleAddToDo, placeholder: 'Add note...' })
+      'div',
+      { className: 'input-group' },
+      React.createElement('input', { type: 'text', className: 'form-control', onChange: this.onChange, value: this.state.todo, onKeyPress: this.handleAddToDo, placeholder: 'Add note...' }),
+      React.createElement(
+        'span',
+        { className: 'input-group-btn' },
+        React.createElement(
+          'button',
+          { className: 'btn btn-secondary', type: 'button' },
+          'Add!'
+        )
+      )
     );
   }
 });
@@ -20647,8 +20663,8 @@ var ToDoList = React.createClass({
     return (
       // Add an <li>ToDoText</li> for each ToDo
       React.createElement(
-        'ul',
-        null,
+        'div',
+        { className: 'list-group' },
         this.props.todos.map(allToDos)
       )
     );
@@ -20661,8 +20677,8 @@ var ToDo = React.createClass({
 
   render: function () {
     return React.createElement(
-      'li',
-      null,
+      'a',
+      { href: '#', className: 'list-group-item' },
       this.props.children
     );
   }
