@@ -76,9 +76,18 @@ var ToDoList = React.createClass({
 // Convert text into a list element
 var ToDo = React.createClass({
   render: function () {
+    var removeStyle = {
+        marginRight: '-5px'
+    }
+    var editStyle = {
+      paddingRight: '5px'
+    }
     return (
-
-      <a href="#" className="list-group-item">{this.props.children}</a>
+      <a href="#" className="list-group-item">
+        {this.props.children}
+        <span className="glyphicon glyphicon-remove pull-right" style={removeStyle}></span>
+        <span className="glyphicon glyphicon-pencil pull-right" style={editStyle}></span>
+      </a>
     )
   }
 })

@@ -20676,10 +20676,18 @@ var ToDo = React.createClass({
   displayName: 'ToDo',
 
   render: function () {
+    var removeStyle = {
+      marginRight: '-5px'
+    };
+    var editStyle = {
+      paddingRight: '5px'
+    };
     return React.createElement(
       'a',
       { href: '#', className: 'list-group-item' },
-      this.props.children
+      this.props.children,
+      React.createElement('span', { className: 'glyphicon glyphicon-remove pull-right', style: removeStyle }),
+      React.createElement('span', { className: 'glyphicon glyphicon-pencil pull-right', style: editStyle })
     );
   }
 });
