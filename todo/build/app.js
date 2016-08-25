@@ -20584,28 +20584,43 @@ var React = require('react');
 var ToDoComponent = React.createClass({
   displayName: 'ToDoComponent',
 
+  // Initializes an array of ToDos
   getInitialState: function () {
-    // Initialize default list of ToDos
-    var activeToDos = [];
-    var inactiveToDos = [];
-    var allToDos = activeToDos.concat(inactiveToDos);
     return {
-      todos: allToDos,
-      activeToDos: activeToDos,
-      inactiveToDos: inactiveToDos
+      toDos: [{ id: '0', text: 'Example ToDo' }]
     };
   },
-  updateToDos: function (newToDo) {
-    var activeToDos = this.state.todos.concat([newToDo]);
-    var updateToDos = this.setState({ todos: activeToDos });
+  generateId: function () {
+    // Creates a unique id by increasing previous ToDo ID  by 1
+    var lastToDo = 0;
+    if (this.state.toDos.length > 0) {
+      var lastToDoIndex = this.state.toDos.length;
+      lastToDo = this.state.toDos[lastToDoIndex - 1];
+    }
+
+    return lastToDo.id + 1;
+  },
+  handleRemoval: function (toDoID) {
+    // Filters out ToDo with mathing ID, saves filtered array as state
+    var filteredToDos = this.state.toDos.filter(function (toDo) {
+      return toDo.id !== toDoID;
+    });
+    this.setState({ toDos: filteredToDos });
+    return;
+  },
+  handleSubmit: function (toDoText) {
+    var toDoID = this.generateId().toString();
+    var toDo = { id: toDoID, text: toDoText };
+    var newToDos = this.state.toDos.concat([toDo]);
+    this.setState({ toDos: newToDos });
     return;
   },
   render: function () {
     return React.createElement(
       'div',
-      { id: 'ToDoListDiv', className: 'col-md-offset-5 col-md-2' },
-      React.createElement(ToDoInput, { onFormSubmit: this.updateToDos }),
-      React.createElement(ToDoList, { todos: this.state.todos })
+      { className: 'col-md-offset-5 col-md-2' },
+      React.createElement(ToDoInput, { addToDo: this.handleSubmit }),
+      React.createElement(ToDoList, { toDos: this.state.toDos, removeToDo: this.handleRemoval })
     );
   }
 });
@@ -20615,33 +20630,36 @@ var ToDoInput = React.createClass({
   displayName: 'ToDoInput',
 
   getInitialState: function () {
-    return { todo: '' };
+    return { toDoText: '' };
   },
-  handleAddToDo: function (e) {
+  handleTask: function (e) {
     if (e.charCode === 13) {
       e.preventDefault();
 
-      // Pass current ToDo to parent component
-      var addToDo = this.props.onFormSubmit(this.state.todo);
-      var clearInput = this.setState({ todo: '' });
+      // Invoke ToDoComponent.handleSubmit() and add new ToDo
+      this.props.addToDo(this.state.toDoText);
+
+      // Clear text in Input box
+      this.setState({ toDoText: '' });
     }
     return;
   },
   onChange: function (e) {
-    var updateToDo = this.setState({ todo: e.target.value });
+    // Update state to reflect text within Input box
+    this.setState({ toDoText: e.target.value });
   },
   render: function () {
     return React.createElement(
       'div',
       { className: 'input-group' },
-      React.createElement('input', { type: 'text', className: 'form-control', onChange: this.onChange, value: this.state.todo, onKeyPress: this.handleAddToDo, placeholder: 'Add note...' }),
+      React.createElement('input', { type: 'text', className: 'form-control', onChange: this.onChange, value: this.state.toDoText, onKeyPress: this.handleTask, placeholder: 'Add note...' }),
       React.createElement(
         'span',
         { className: 'input-group-btn' },
         React.createElement(
           'button',
           { className: 'btn btn-secondary', type: 'button' },
-          'Add!'
+          'Add'
         )
       )
     );
@@ -20652,20 +20670,21 @@ var ToDoInput = React.createClass({
 var ToDoList = React.createClass({
   displayName: 'ToDoList',
 
+  removeToDo: function (toDoID) {
+    // Links to ToDoComponent.handleRemoval(), called in child ToDo
+    this.props.removeToDo(toDoID);
+    return;
+  },
   render: function () {
-    var allToDos = function (ToDoText) {
-      return React.createElement(
-        ToDo,
-        null,
-        ToDoText
-      );
-    };
+    var toDoArray = this.props.toDos.map(function (toDo) {
+      return React.createElement(ToDo, { key: toDo.id, toDoID: toDo.id, toDoText: toDo.text, removeToDo: this.removeToDo });
+    }, this);
     return (
-      // Add an <li>ToDoText</li> for each ToDo
+      // Assembles a group of ToDos as anchors nested in a div
       React.createElement(
         'div',
         { className: 'list-group' },
-        this.props.todos.map(allToDos)
+        toDoArray
       )
     );
   }
@@ -20675,7 +20694,13 @@ var ToDoList = React.createClass({
 var ToDo = React.createClass({
   displayName: 'ToDo',
 
+  removeToDo: function () {
+    // Invokes ToDoComponent.handleRemoval() and removes ToDo
+    this.props.removeToDo(this.props.toDoID);
+    return;
+  },
   render: function () {
+    // Inline CSS - demo purposes
     var removeStyle = {
       marginRight: '-5px'
     };
@@ -20685,8 +20710,8 @@ var ToDo = React.createClass({
     return React.createElement(
       'a',
       { href: '#', className: 'list-group-item' },
-      this.props.children,
-      React.createElement('span', { className: 'glyphicon glyphicon-remove pull-right', style: removeStyle }),
+      this.props.toDoText,
+      React.createElement('span', { className: 'glyphicon glyphicon-remove pull-right', style: removeStyle, onClick: this.removeToDo }),
       React.createElement('span', { className: 'glyphicon glyphicon-pencil pull-right', style: editStyle })
     );
   }
