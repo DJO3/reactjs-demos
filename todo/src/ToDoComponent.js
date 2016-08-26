@@ -17,8 +17,9 @@ var ToDoComponent = React.createClass({
       var lastToDoIndex = this.state.toDos.length
       lastToDo = this.state.toDos[lastToDoIndex - 1]
     }
+    newID = lastToDo.id == null ? 0 : parseInt(lastToDo.id) + 1
 
-    return lastToDo.id + 1
+    return newID
   },
   handleRemoval: function (toDoID) {
     // Filters out ToDo with mathing ID, saves filtered array as state
@@ -27,6 +28,16 @@ var ToDoComponent = React.createClass({
     })
     this.setState({toDos: filteredToDos})
     return
+  },
+  handleEdit: function (toDoID, toDoText) {
+    var toDos = this.state.toDos
+    for (var i = 0; i < toDos.length; i++) {
+      if (toDos[i].id === toDoID) {
+        toDos[i].text = toDoText
+        break
+      }
+    }
+    this.setState({toDos: toDos})
   },
   handleSubmit: function (toDoText) {
     var toDoID = this.generateId().toString()
@@ -39,7 +50,7 @@ var ToDoComponent = React.createClass({
     return (
       <div className='col-md-offset-5 col-md-2'>
         <ToDoInput addToDo={this.handleSubmit}/>
-        <ToDoList toDos={this.state.toDos} removeToDo={this.handleRemoval} />
+        <ToDoList toDos={this.state.toDos} removeToDo={this.handleRemoval} editToDo={this.handleEdit}/>
       </div>
     )
   }
@@ -85,10 +96,14 @@ var ToDoList = React.createClass({
     this.props.removeToDo(toDoID)
     return
   },
+  editToDo: function (toDoID, toDoText) {
+    this.props.editToDo(toDoID, toDoText)
+    return
+  },
   render: function () {
     var toDoArray = this.props.toDos.map(function (toDo) {
       return (
-        <ToDo key={toDo.id} toDoID={toDo.id} toDoText={toDo.text} removeToDo={this.removeToDo} />
+        <ToDo key={toDo.id} toDoID={toDo.id} toDoText={toDo.text} removeToDo={this.removeToDo} editToDo={this.editToDo}/>
       )
     }, this)
     return (
@@ -105,6 +120,11 @@ var ToDo = React.createClass({
     this.props.removeToDo(this.props.toDoID)
     return
   },
+  editToDo: function () {
+    var newTextID = this.props.toDoID+"toDoText"
+    var newText = document.getElementById(newTextID).textContent
+    this.props.editToDo(this.props.toDoID, newText)
+  },
   render: function () {
     // Inline CSS - demo purposes
     var removeStyle = {
@@ -113,11 +133,15 @@ var ToDo = React.createClass({
     var editStyle = {
       paddingRight: '5px'
     }
+    var elipsis = {
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis"
+}
     return (
       <a href="#" className="list-group-item">
-        {this.props.toDoText}
+        <span id={this.props.toDoID + 'toDoText'} className={elipsis} contentEditable='true' onInput={this.editToDo}>{this.props.toDoText}</span>
         <span className="glyphicon glyphicon-remove pull-right" style={removeStyle} onClick={this.removeToDo}></span>
-        <span className="glyphicon glyphicon-pencil pull-right" style={editStyle}></span>
       </a>
     )
   }
