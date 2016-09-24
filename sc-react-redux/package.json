@@ -1,0 +1,17 @@
+{
+  "name": "sc-react-redux",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --progress --colors --hot --config ./webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
+  }
+}
