@@ -1,8 +1,7 @@
-import Stream from './Stream'
+import Stream from './presenter'
 import { shallow } from 'enzyme'
 
 describe('Stream', () => {
-
   const props = {
     tracks: [{ title: 'x' }, { title: 'y' }]
   }
